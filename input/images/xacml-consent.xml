@@ -1,0 +1,87 @@
+<!-- This XACML policy file encodes a patient consent for Patient ID 12345. Specifically:
+
+Purpose: Defines the patient's preferences for data sharing based on sensitivity tags using Attribute-Based Access Control (ABAC).
+
+Consent Rules:
+
+1. Permits Normal Data - Allows sharing of data tagged as "Normal" (N) sensitivity
+2. Denies Restricted Data - Blocks sharing of data tagged as "Restricted" (R) sensitivity
+
+How it Works:
+
+- Targets requests where the subject-id matches patient 12345
+- Uses "deny-overrides" at the PolicySet level to ensure denials take precedence
+- Contains two sub-policies: one for Normal data (permit-overrides) and one for Restricted data (deny-overrides)
+- Evaluates the data-sensitivity attribute on resources to determine access
+- This represents the patient's preferences layer in the consent framework, which works in conjunction with organizational policies (like xacml-overriding.xml) to make final access decisions.
+-->
+
+<PolicySet xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+           PolicySetId="consent-policy-set-12345"
+           Version="1.0"
+           PolicyCombiningAlgId="urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:deny-overrides">
+
+    <Description>Consent Policy Set for Patient ID 12345</Description>
+    <Target>
+        <AnyOf>
+            <AllOf>
+                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">12345</AttributeValue>
+                    <AttributeDesignator 
+                        AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" 
+                        Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" 
+                        DataType="http://www.w3.org/2001/XMLSchema#string" 
+                        MustBePresent="true"/>
+                </Match>
+            </AllOf>
+        </AnyOf>
+    </Target>
+
+    <Policy PolicyId="consent-policy-12345-normal-data"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides">
+
+        <Description>Policy to permit sharing of Normal (N) data</Description>
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Normal</AttributeValue>
+                        <AttributeDesignator AttributeId="data-sensitivity"
+                                             Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                             DataType="http://www.w3.org/2001/XMLSchema#string"
+                                             MustBePresent="true"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule RuleId="permit-normal-data" Effect="Permit">
+            <Description>Permit access to Normal data</Description>
+        </Rule>
+
+    </Policy>
+
+    <Policy PolicyId="consent-policy-12345-restricted-data"
+            RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides">
+
+        <Description>Policy to deny sharing of Restricted (R) data</Description>
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Restricted</AttributeValue>
+                        <AttributeDesignator AttributeId="data-sensitivity"
+                                             Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                             DataType="http://www.w3.org/2001/XMLSchema#string"
+                                             MustBePresent="true"/>
+                    </Match>
+                </AllOf>    
+            </AnyOf>
+        </Target>
+        <Rule RuleId="deny-restricted-data" Effect="Deny">
+            <Description>Deny access to Restricted data</Description>
+        </Rule>
+    </Policy>
+</PolicySet>

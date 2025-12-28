@@ -1,0 +1,72 @@
+<!-- This XACML policy file defines an organizational governance layer that overrides patient consent preferences. Specifically:
+
+Purpose: It demonstrates how an organization's data access rules take precedence over patient consent policies using XACML's "deny-overrides" combining algorithm.
+
+Key Rules:
+
+1. Emergency Access - Permits doctors to access data during life-safety emergencies, regardless of consent restrictions
+2. Archived Data Denial - Strictly forbids access to archived records, overriding any patient permits
+3. Administrative Staff Restriction - Denies administrative staff access to data tagged as "Restricted" (R), even if patient consent would allow it
+
+Context: This sits within a larger governance framework where patient consent (referenced via PolicySetIdReference) is evaluated, but organizational policies can override patient preferences when necessary for clinical workflows, safety, or compliance reasons. A master container applies default-deny if neither permits nor denies are found.
+-->
+
+<Policy PolicyId="Org_Policy_7890_Workflow_Governance" 
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides" 
+        xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17">
+    
+    <Description>
+        Organizational Governance: Enforces workflow roles and clinical status.
+        This policy overrides subject-level permits.
+    </Description>
+
+    <Target/> 
+    
+    <Rule RuleId="Emergency_Access_Permit" Effect="Permit">
+        <Description>Allows doctors to access data regardless of tags during a life-safety event.</Description>
+        <Condition>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Emergency</AttributeValue>
+                <AttributeDesignator 
+                    AttributeId="urn:example:names:clinical:access-context" 
+                    Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" 
+                    DataType="http://www.w3.org/2001/XMLSchema#string" 
+                    MustBePresent="true"/>
+            </Apply>
+        </Condition>
+    </Rule>
+
+    <Rule RuleId="Deny_Archived_Data_Access" Effect="Deny">
+        <Description>Strictly forbids access if the record is in 'Archived' status, overriding user permits.</Description>
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Archived</AttributeValue>
+                        <AttributeDesignator 
+                            AttributeId="urn:example:names:resource:status" 
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" 
+                            DataType="http://www.w3.org/2001/XMLSchema#string" 
+                            MustBePresent="true"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+    </Rule>
+
+    <Rule RuleId="Deny_Non_Clinical_Staff_Restricted" Effect="Deny">
+        <Description>Forbids administrative staff from seeing any data tagged as 'Restricted' (R).</Description>
+        <Condition>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Administrative</AttributeValue>
+                    <AttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role" Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                </Apply>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">R</AttributeValue>
+                    <AttributeDesignator AttributeId="urn:example:med:names:resource:data-tag" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>
+                </Apply>
+            </Apply>
+        </Condition>
+    </Rule>
+</Policy>

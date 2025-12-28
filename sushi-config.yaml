@@ -1,0 +1,46 @@
+# ╭──────────────────────────────────────ImplementationGuide───────────────────────────────────────╮
+# │  The properties below are used to create the ImplementationGuide resource. For a list of       │
+# │  supported properties, see: https://fshschool.org/docs/sushi/configuration/                    │
+# ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
+id: johnmoehrke.xacml-consent.example
+canonical: http://johnmoehrke.github.io/xacml-consent
+name: JohnMoehrkeXACMLConsentExample
+title: John Moehrke XACML Consent Example
+status: draft
+version: 0.1.0
+#fhirVersion: 4.3.0
+fhirVersion: 4.0.1
+copyrightYear: 2021+
+releaseLabel: ci-build
+publisher:
+  name: John Moehrke (Moehrke Research LLC)
+  url: http://healthcaresecprivacy.blogspot.com
+  email: JohnMoehrke@gmail.com
+license: CC-BY-SA-4.0
+jurisdiction: 'http://unstats.un.org/unsd/methods/m49/m49.htm#001'
+
+parameters:  # see https://confluence.hl7.org/display/FHIR/Implementation+Guide+Parameters
+  path-resource:
+    - fsh-generated/resources
+    - input/examples
+#  path-pages:
+#    - input/pagecontent
+#    - fsh-generated/includes
+  show-inherited-invariants: 'false'
+  usage-stats-opt-out: 'false'
+  logging: progress
+  shownav: 'true'
+  active-tables: 'false'
+  apply-contact: 'true'
+  apply-jurisdiction: 'true'
+  apply-publisher: 'true'
+  apply-version: 'true'
+  path-binary: input/images
+  
+
+# ╭────────────────────────────────────────────menu.xml────────────────────────────────────────────╮
+# │  To use a provided input/includes/menu.xml file, delete the "menu" property below.             │
+# ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
+menu:
+  Home: index.html
+  Artifacts: artifacts.html
