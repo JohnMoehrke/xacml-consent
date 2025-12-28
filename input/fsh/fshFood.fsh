@@ -41,31 +41,35 @@ Profile: FHIRConsentXACML
 Parent: Consent
 Id: fhir-consent-xacml
 Title: "FHIR Consent with XACML Policies"
-Description: "A FHIR Consent resource that references XACML policies for access control, without including any rules directly in the Consent. Therefore, it does not include any provisions directly within the Consent. The actual access rules are defined in the referenced XACML policy documents."
+Description: "A FHIR Consent resource that references XACML policies for access control, without including any rules directly in the Consent. Therefore, it does not include any provisions directly within the Consent. The actual access rules are defined in the referenced XACML policy documents.
+
+changes from R4 Consent:
+- no scope element
+- policy element is now policyBasis
+- policyBasis has a reference to DocumentReference containing XACML policy
+- sourceReference is a DocumentReference containing patient specific XACML policy"
 * provision 0..0
-* scope 1..1
-  * coding 1..1
-  * coding = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy
 * category 1..1
   * coding 1..1 
   * coding = http://loinc.org#59284-0
-* patient 1..1
-* policy 1..1
-  * ^comment = "The policy element is used to reference XACML policy documents that define the access control rules. The 'uri' sub-element points to the location of the XACML policy document, while the 'sourceReference' sub-element can be used to reference a DocumentReference resource containing the actual XACML policy."
-  * authority 0..1
-  * uri 1..1 // URI referencing the XACML policy document for overriding policy set 
+* subject 1..1
+* subject only Reference(Patient)
+* policyBasis 1..1
+  * ^comment = "The policy element is used to reference XACML policy documents that define the access control rules. The 'reference' sub-element points to the location of the XACML policy document."
+  * reference only Reference(DocumentReference)
 * sourceReference 1..1 // Attachment containing the patient specific XACML policy document
   * ^comment = "The sourceReference element points to a DocumentReference resource that contains the XACML policy document specific to the patient. This allows for the inclusion of patient-specific access control rules defined in XACML format."
+* sourceReference only Reference(DocumentReference)
+
 
 Instance: ExampleFHIRConsentXACML
 InstanceOf: FHIRConsentXACML
 Title: "Example FHIR Consent with XACML Policies"
 Description: "An example instance of a FHIR Consent resource that references XACML policies for access"
-* patient = Reference(ex-patient)
-* policy[0].uri = "http://example.org/policies/xacml-overriding.xml"
+* subject = Reference(ex-patient)
+* policyBasis[0].reference = Reference(xacml-overriding)
 * sourceReference = Reference(xacml-patient-consent-12345)
 * status = #active
-* scope.coding = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
 

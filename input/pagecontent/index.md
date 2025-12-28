@@ -12,12 +12,18 @@ The [Consent](Consent-ExampleFHIRConsentXACML.html) points at the [overriding po
 
 ~~~mermaid
 graph TD
-    A[FHIR Consent Resource] -->|policy.uri| B[XACML Overriding Policy]
+    A[FHIR Consent Resource] -->|policyBasis.reference| B[XACML Overriding Policy]
     A -->|sourceReference| C[XACML Patient Consent Policy]
     style B fill:#ff0000,color:#fff
     style C fill:#ff0000,color:#fff
 
 ~~~
+
+changes from R4 Consent:
+- no scope element
+- policy element is now policyBasis
+- policyBasis has a reference to DocumentReference containing XACML policy
+- sourceReference is a DocumentReference containing patient specific XACML policy
 
 ### XACML Policies
 

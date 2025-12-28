@@ -9,7 +9,8 @@ title: John Moehrke XACML Consent Example
 status: draft
 version: 0.1.0
 #fhirVersion: 4.3.0
-fhirVersion: 4.0.1
+#fhirVersion: 4.0.1
+fhirVersion: 6.0.0-ballot3
 copyrightYear: 2021+
 releaseLabel: ci-build
 publisher:
