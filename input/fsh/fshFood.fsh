@@ -52,6 +52,12 @@ changes from R4 Consent:
 * category 1..1
   * coding 1..1 
   * coding = http://loinc.org#59284-0
+* patient 1..1
+* policy 1..1
+  * ^comment = "The policy element is used to reference XACML policy documents that define the access control rules. The 'uri' sub-element points to the location of the XACML policy document, while the 'sourceReference' sub-element can be used to reference a DocumentReference resource containing the actual XACML policy."
+  * authority 0..1
+  * uri 1..1 // URI referencing the XACML policy document for overriding policy set 
+* source[x] 1..1 // Attachment containing the patient specific XACML policy document
 * subject 1..1
 * subject only Reference(Patient)
 * policyBasis 1..1
@@ -62,8 +68,24 @@ changes from R4 Consent:
 * sourceReference only Reference(DocumentReference)
 
 
-Instance: ExampleFHIRConsentXACML
+Instance: ExampleFHIRConsentXACMLreference
 InstanceOf: FHIRConsentXACML
+Title: "Example FHIR Consent with references to XACML Policies"
+Description: "An example instance of a FHIR Consent resource that references XACML policies for access, and does not include any rules directly in the Consent."
+* patient = Reference(ex-patient)
+* policy[0].uri = "http://example.org/policies/xacml-overriding.xml"
+* sourceAttachment.url = "http://example.org/policies/xacml-patient-consent-12345.xml"
+* status = #active
+* scope.coding = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy
+* category.coding = http://loinc.org#59284-0  "Consent Document"
+* category.text = "Consent Document with XACML Policies"
+
+Instance: ExampleFHIRConsentXACMLcopy
+InstanceOf: FHIRConsentXACML
+Title: "Example FHIR Consent with copy of XACML Policies"
+Description: "An example instance of a FHIR Consent resource that references XACML policies for access, and a copy of the patient specific XACML policy is included as a DocumentReference."
+* patient = Reference(ex-patient)
+* policy[0].uri = "http://example.org/policies/xacml-overriding.xml"
 Title: "Example FHIR Consent with XACML Policies"
 Description: "An example instance of a FHIR Consent resource that references XACML policies for access"
 * subject = Reference(ex-patient)
