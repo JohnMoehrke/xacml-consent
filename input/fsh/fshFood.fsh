@@ -93,8 +93,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
-* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
-* identifier[=].value = "consent-policy-set-12345"
+* identifier[XPS].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[XPS].value = "consent-policy-set-12345"
 
 
 Instance: ExampleFHIRConsentXACMLcopyReference
@@ -107,8 +107,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
-* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
-* identifier[=].value = "consent-policy-set-12345"
+* identifier[XPS].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[XPS].value = "consent-policy-set-12345"
 
 
 Instance: ExampleFHIRConsentXACMLcopy
@@ -121,8 +121,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
-* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
-* identifier[=].value = "consent-policy-set-12345"
+* identifier[XPS].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[XPS].value = "consent-policy-set-12345"
 
 
 
