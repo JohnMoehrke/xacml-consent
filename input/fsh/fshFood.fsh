@@ -75,6 +75,13 @@ changes from R4-R6 Consent:
     * contentType 1..1
       * ^comment = "The contentType field specifies the MIME type of the XACML policy document, typically application/xacml+xml."
     * contentType = #application/xacml+xml
+* identifier ^slicing.discriminator.type = #type
+* identifier ^slicing.discriminator.path = "type.coding.code"
+* identifier ^slicing.rules = #open
+* identifier ^slicing.description = "Identifiers for the patient specific XACML Policy Set"
+* identifier contains XPS 1..* MS
+* identifier[XPS].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId (exactly)
+* identifier[XPS].value 1..1
 
 Instance: ExampleFHIRConsentXACMLreference
 InstanceOf: FHIRConsentXACML
@@ -86,6 +93,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
+* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[=].value = "consent-policy-set-12345"
 
 
 Instance: ExampleFHIRConsentXACMLcopyReference
@@ -98,6 +107,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
+* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[=].value = "consent-policy-set-12345"
 
 
 Instance: ExampleFHIRConsentXACMLcopy
@@ -110,6 +121,8 @@ Description: "An example instance of a FHIR Consent resource that references XAC
 * status = #active
 * category.coding = http://loinc.org#59284-0  "Consent Document"
 * category.text = "Consent Document with XACML Policies"
+* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[=].value = "consent-policy-set-12345"
 
 
 
@@ -121,6 +134,8 @@ Description: "Example of a xml XACML overriding policy DocumentReference."
 * content.attachment.id = "ig-loader-xacml-overriding.xml"
 * status = #current
 * type.text = "XACML Overriding Policy Document"
+* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[=].value = "Org_Policy_7890_Workflow_Governance"
 
 Instance: xacml-patient-consent-12345
 InstanceOf: DocumentReference
@@ -131,3 +146,5 @@ Description: "Example of a xml XACML Consent policy for Patient 12345 in a Docum
 * subject = Reference(ex-patient)
 //* content.attachment.contentType = #application/xacml+xml
 * content.attachment.id = "ig-loader-xacml-consent.xml"
+* identifier[+].type.coding.code = #oasis:names:tc:xacml:1.0:Policy/@PolicyId
+* identifier[=].value = "consent-policy-set-12345"
