@@ -12,17 +12,28 @@ The Consent points at the [overriding policy](#xacml-overriding-policy) and the 
 
 ~~~mermaid
 graph TD
-    A[FHIR Consent Resource] -->|policy.uri| B[XACML Overriding Policy]
-    A -->|"source[x]"| C[XACML Patient Consent Policy]
+    A[FHIR Consent Resource] -->|policyBasis| B[XACML Overriding Policy]
+    A -->|"source*"| C[XACML Patient Consent Policy]
     style B fill:#ff0000,color:#fff
     style C fill:#ff0000,color:#fff
 
 ~~~
 
-Examples of Consent:
+**changes from R4->R6 Consent:**
 
-- [Consent with copy of XACML policy set](Consent-ExampleFHIRConsentXACMLcopy.html) includes the `source[x]` element with pointer to a copy of the patient specific XACML policy as a DocumentReference resource.
-- [Consent with link to XACML policy set](Consent-ExampleFHIRConsentXACMLreference.html) uses the `source[x]` element to point at the overriding XACML policy.
+- no scope element
+- policy element is now policyBasis with either a .uri or .reference to DocumentReference containing XACML policy
+  - policyBasis.reference to DocumentReference containing XACML policy
+  - policyBaisis.uri to point at an external XACML policy
+- source[x] is now sourceReference or sourceAttachment
+  - sourceReference is a DocumentReference containing patient specific XACML policy
+  - sourceAttachment.url is a direct link to the patient specific XACML policy 
+
+**Examples of Consent:**
+
+- [Consent with copy of the XACML policy sets](Consent-ExampleFHIRConsentXACMLcopy.html) includes the `policyBasis.reference` element a copy of the overriding policy and `sourceReference` with a copy of the patient specific XACML policy.
+- [Consent with link to overriding policy and copy of patient XACML policy](Consent-ExampleFHIRConsentXACMLcopyReference.html) uses the `policyBasis.uri` element to point at the overriding XACML policy and `sourceReference` with a copy of the patient specific XACML policy.
+- [Consent with link to XACML policy sets](Consent-ExampleFHIRConsentXACMLreference.html) uses the `policyBasis.uri` element to point at the overriding XACML policy and `sourceAttachment.url` to point at the patient specific XACML policy.
 
 ### XACML Policies
 
