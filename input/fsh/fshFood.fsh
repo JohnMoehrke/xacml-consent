@@ -54,13 +54,25 @@ Description: "A FHIR Consent resource that references XACML policies for access 
   * ^comment = "The policy element is used to reference XACML policy documents that define the access control rules. The 'uri' sub-element points to the location of the XACML policy document, while the 'sourceReference' sub-element can be used to reference a DocumentReference resource containing the actual XACML policy."
   * authority 0..1
   * uri 1..1 // URI referencing the XACML policy document for overriding policy set 
-* sourceReference 1..1 // Attachment containing the patient specific XACML policy document
+* source[x] 1..1 // Attachment containing the patient specific XACML policy document
   * ^comment = "The sourceReference element points to a DocumentReference resource that contains the XACML policy document specific to the patient. This allows for the inclusion of patient-specific access control rules defined in XACML format."
 
-Instance: ExampleFHIRConsentXACML
+Instance: ExampleFHIRConsentXACMLreference
 InstanceOf: FHIRConsentXACML
-Title: "Example FHIR Consent with XACML Policies"
-Description: "An example instance of a FHIR Consent resource that references XACML policies for access"
+Title: "Example FHIR Consent with references to XACML Policies"
+Description: "An example instance of a FHIR Consent resource that references XACML policies for access, and does not include any rules directly in the Consent."
+* patient = Reference(ex-patient)
+* policy[0].uri = "http://example.org/policies/xacml-overriding.xml"
+* sourceAttachment.url = "http://example.org/policies/xacml-patient-consent-12345.xml"
+* status = #active
+* scope.coding = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy
+* category.coding = http://loinc.org#59284-0  "Consent Document"
+* category.text = "Consent Document with XACML Policies"
+
+Instance: ExampleFHIRConsentXACMLcopy
+InstanceOf: FHIRConsentXACML
+Title: "Example FHIR Consent with copy of XACML Policies"
+Description: "An example instance of a FHIR Consent resource that references XACML policies for access, and a copy of the patient specific XACML policy is included as a DocumentReference."
 * patient = Reference(ex-patient)
 * policy[0].uri = "http://example.org/policies/xacml-overriding.xml"
 * sourceReference = Reference(xacml-patient-consent-12345)

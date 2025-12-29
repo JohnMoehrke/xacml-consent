@@ -8,16 +8,21 @@ This IG is founded on HL7 FHIR Revision {{site.data.fhir.version}} found at [{{s
 <br/>
 </div>
 
-The [Consent](Consent-ExampleFHIRConsentXACML.html) points at the [overriding policy](#xacml-overriding-policy) and the [patient specific policy](#xacml-patient-consent-policy) as shown below. This is [Profiled](StructureDefinition-fhir-consent-xacml.html):
+The Consent points at the [overriding policy](#xacml-overriding-policy) and the [patient specific policy](#xacml-patient-consent-policy) as shown below. This is [Profiled](StructureDefinition-fhir-consent-xacml.html):
 
 ~~~mermaid
 graph TD
     A[FHIR Consent Resource] -->|policy.uri| B[XACML Overriding Policy]
-    A -->|sourceReference| C[XACML Patient Consent Policy]
+    A -->|"source[x]"| C[XACML Patient Consent Policy]
     style B fill:#ff0000,color:#fff
     style C fill:#ff0000,color:#fff
 
 ~~~
+
+Examples of Consent:
+
+- [Consent with copy of XACML policy set](Consent-ExampleFHIRConsentXACMLcopy.html) includes the `source[x]` element with pointer to a copy of the patient specific XACML policy as a DocumentReference resource.
+- [Consent with link to XACML policy set](Consent-ExampleFHIRConsentXACMLreference.html) uses the `source[x]` element to point at the overriding XACML policy.
 
 ### XACML Policies
 
