@@ -1,0 +1,175 @@
+<PolicySet
+    xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+    PolicySetId="urn:org:hospital:policyset:AB352"
+    Version="1.0"
+    PolicyCombiningAlgId="urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:deny-overrides">
+
+    <!-- Applies to this California hospital as data controller -->
+    <Target>
+        <AnyOf>
+            <AllOf>
+                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                    <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
+                        CA-HOSPITAL
+                    </AttributeValue>
+                    <AttributeDesignator
+                        AttributeId="urn:org:hospital:attribute:organization-type"
+                        Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                        DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                </Match>
+            </AllOf>
+        </AnyOf>
+    </Target>
+
+    <!-- ========================================================= -->
+    <!-- POLICY 1: AB352 Denial of Out-of-State Disclosure         -->
+    <!-- ========================================================= -->
+    <Policy
+        PolicyId="urn:org:hospital:policy:AB352:deny-out-of-state-disclosure"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <!-- Applies to disclosure/transmission actions -->
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
+                            disclose
+                        </AttributeValue>
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:action:verb"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule
+            RuleId="urn:org:hospital:rule:AB352:deny-out-of-state"
+            Effect="Deny">
+
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <!-- Resource is AB352-sensitive -->
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:health:sensitivity"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ABORTION</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">GENDER_AFFIRMING_CARE</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">CONTRACEPTION</AttributeValue>
+                    </Apply>
+
+                    <!-- Recipient jurisdiction is not California -->
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-not-equal">
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:recipient:jurisdiction"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:access-subject"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">CA</AttributeValue>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+
+            <!-- Obligation: log denied AB352 disclosure attempt -->
+            <ObligationExpressions>
+                <ObligationExpression
+                    ObligationId="urn:org:hospital:obligation:log-denial"
+                    FulfillOn="Deny">
+                    <AttributeAssignmentExpression AttributeId="urn:org:hospital:log:reason">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
+                            AB352 prohibited disclosure to out-of-state entity
+                        </AttributeValue>
+                    </AttributeAssignmentExpression>
+                </ObligationExpression>
+            </ObligationExpressions>
+
+        </Rule>
+    </Policy>
+
+    <!-- ========================================================= -->
+    <!-- POLICY 2: Allow In-State Treatment Access                 -->
+    <!-- ========================================================= -->
+    <Policy
+        PolicyId="urn:org:hospital:policy:AB352:allow-in-state-treatment"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides">
+
+        <Target>
+            <AnyOf>
+                <AllOf>
+                    <!-- Access/use actions -->
+                    <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">access</AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">use</AttributeValue>
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:action:verb"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                    </Match>
+                </AllOf>
+            </AnyOf>
+        </Target>
+
+        <Rule
+            RuleId="urn:org:hospital:rule:AB352:permit-in-state-treatment"
+            Effect="Permit">
+
+            <Condition>
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                    <!-- Recipient jurisdiction is California -->
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:recipient:jurisdiction"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:access-subject"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">CA</AttributeValue>
+                    </Apply>
+
+                    <!-- Purpose is treatment -->
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeDesignator
+                            AttributeId="urn:org:hospital:attribute:purpose-of-use"
+                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">TREATMENT</AttributeValue>
+                    </Apply>
+
+                </Apply>
+            </Condition>
+
+        </Rule>
+    </Policy>
+
+    <!-- ========================================================= -->
+    <!-- POLICY 3: Segmentation Requirement (Obligation)           -->
+    <!-- ========================================================= -->
+    <Policy
+        PolicyId="urn:org:hospital:policy:AB352:segmentation"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides">
+
+        <Rule
+            RuleId="urn:org:hospital:rule:AB352:segmentation-required"
+            Effect="Permit">
+
+            <!-- Always applies; obligation enforces segmentation -->
+            <ObligationExpressions>
+                <ObligationExpression
+                    ObligationId="urn:org:hospital:obligation:segment-sensitive-data"
+                    FulfillOn="Permit">
+                    <AttributeAssignmentExpression AttributeId="urn:org:hospital:segmentation:categories">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
+                            ABORTION,GENDER_AFFIRMING_CARE,CONTRACEPTION
+                        </AttributeValue>
+                    </AttributeAssignmentExpression>
+                </ObligationExpression>
+            </ObligationExpressions>
+
+        </Rule>
+    </Policy>
+
+</PolicySet>

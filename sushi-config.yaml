@@ -43,4 +43,5 @@ parameters:  # see https://confluence.hl7.org/display/FHIR/Implementation+Guide+
 # ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 menu:
   Home: index.html
+  AB352: ab352.html
   Artifacts: artifacts.html
