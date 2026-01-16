@@ -13,3 +13,4 @@ This is a trial IG to explore using XACML policies for FHIR Consent resources.
 
 The solution is not as clear as it should be. I filed [FHIR-53724 - Consent policyRule is missing](https://jira.hl7.org/browse/FHIR-53724) to address issues found.
 
+.
