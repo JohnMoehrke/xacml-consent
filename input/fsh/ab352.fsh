@@ -64,18 +64,12 @@ Note did not use HL7 v2-ActCodes as two of the three categories are not represen
 """
 * ^status = #active
 * ^experimental = false
+* ^caseSensitive = true
 //* content = #complete
 // Codes representing types of sensitive health information under AB352
 * #ABORTION "Abortion-related services" "Health information related to abortion services, including procedures, counseling, and follow-up care."
 * #GENDER_AFFIRMING_CARE "Gender-affirming care" "Health information related to gender-affirming care, including hormone therapy, surgeries, and counseling."
 * #CONTRACEPTION "Contraception" "Health information related to contraception methods, counseling, and management."
-
-
-Alias: $loinc = http://loinc.org
-Alias: $snomed = http://snomed.info/sct
-Alias: $icd9cm = http://hl7.org/fhir/sid/icd-9-cm
-Alias: $icd10cm = http://hl7.org/fhir/sid/icd-10-cm
-Alias: $cpt = http://www.ama-assn.org/go/cpt
 
 ValueSet: VS_AB352_Segmentation_Tags
 Id: vs-ab352-segmentation-tags
@@ -85,71 +79,132 @@ Description: "ValueSet of security labels used to segment AB352-sensitive health
 * ^experimental = false
 * codes from system CS_Health_Sensitivity
 
-ValueSet: VS_Abortion_Topics
-Id: vs-abortion-topics
-Title: "Abortion-Related Health Topics"
-Description: """
-Abortion-related clinical concepts drawn from LOINC, SNOMED CT, and ICD-10-CM.
-Intended for segmentation of sensitive reproductive health information.
+Alias: $loinc = http://loinc.org
+Alias: $snomed = http://snomed.info/sct
+Alias: $icd9cm = http://hl7.org/fhir/sid/icd-9-cm
+Alias: $icd10cm = http://hl7.org/fhir/sid/icd-10-cm
+Alias: $cpt = http://www.ama-assn.org/go/cpt
 
-The ICD-10-CM codes above are directly grounded in the retrieved sources:
-- ICDcodes.ai  abortion documentation guide (O04.x) - https://icdcodes.ai/diagnosis/abortion/documentation?utm_source=copilot.com
-- HealthNet abortion diagnosis list (O00.x) - https://providerlibrary.healthnetcalifornia.com/content/dam/centene/healthnet/pdfs/providerlibrary/500073-Abortion-DX-Code-List.pdf?utm_source=copilot.com
+
+
+
+ValueSet: VS_Abortion_Topics_HealthNet
+Id: vs-abortion-topics-healthnet
+Title: "Abortion-Related Health Topics (Health Net California)"
+Description: """
+ICD-10-CM codes for abortion-related services referenced in Health Net California's clinical policy.
+This list contains principal diagnosis codes for abortion and abortion-related services processed 
+at zero cost share in accordance with Senate Bill 245 (the Abortion Accessibility Act).
+
+Health Net California's clinical policy 'HNCA.CP.MP.495 – Abortion Services' provides the
+guidelines for coverage of abortion services, including the specific ICD-10-CM codes listed below.
+- Filename: 500073-Abortion-DX-Code-List.pdf
+
+**Note:** This list may not be all-inclusive and is subject to change.
 """
 * ^status = #active
 * ^experimental = false
 
 // ------------------------------------------------------------
-// LOINC — abortion-related observations & procedures
-// ------------------------------------------------------------
-* $loinc#8665-2      // Induced abortion [History]
-* $loinc#8666-0      // Spontaneous abortion [History]
-* $loinc#11636-8     // Abortion method
-* $loinc#11637-6     // Abortion complications
-* $loinc#11638-4     // Abortion outcome
-* $loinc#11639-2     // Abortion date
-* $loinc#11640-0     // Number of abortions
-
-
-// ------------------------------------------------------------
-// SNOMED CT — procedures, findings, and pregnancy outcomes
-// ------------------------------------------------------------
-* $snomed#386637004   // Induced abortion (procedure)
-* $snomed#17369002    // Spontaneous abortion (disorder)
-* $snomed#19154009    // Therapeutic abortion (procedure)
-* $snomed#237244005   // Medical abortion (procedure)
-* $snomed#77386006    // Incomplete abortion (disorder)
-* $snomed#28956005    // Missed abortion (disorder)
-* $snomed#63487001    // Habitual abortion (disorder)
-* $snomed#169745008   // Abortion with complications (finding)
-* $snomed#199347004    // Pregnancy termination counseling (procedure)
-
-
-
-// ------------------------------------------------------------
-// ICD-10-CM — abortion-related diagnoses
+// ICD-10-CM — Abortion-related diagnoses (Health Net CA)
 // ------------------------------------------------------------
 * $icd10cm#O00.00   // Abdominal pregnancy without intrauterine pregnancy
 * $icd10cm#O00.01   // Abdominal pregnancy with intrauterine pregnancy
-* $icd10cm#O00.101   // Right tubal pregnancy without intrauterine pregnancy
-* $icd10cm#O00.102   // Left tubal pregnancy without intrauterine pregnancy
-* $icd10cm#O00.109   // Unspecified tubal pregnancy without intrauterine pregnancy
-* $icd10cm#O00.111   // Right tubal pregnancy with intrauterine pregnancy
-* $icd10cm#O00.112   // Left tubal pregnancy with intrauterine pregnancy
-* $icd10cm#O03.9     // Spontaneous abortion, unspecified
-* $icd10cm#O04.1     // Medical abortion, incomplete, without complication
-* $icd10cm#O04.4     // Medical abortion, incomplete, with complication
-* $icd10cm#O07.4     // Failed attempted abortion, without complication
-* $icd10cm#O07.5     // Failed attempted abortion, with complication
+* $icd10cm#O00.101  // Right tubal pregnancy without intrauterine pregnancy
+* $icd10cm#O00.102  // Left tubal pregnancy without intrauterine pregnancy
+* $icd10cm#O00.109  // Unspecified tubal pregnancy without intrauterine pregnancy
+* $icd10cm#O00.111  // Right tubal pregnancy with intrauterine pregnancy
+* $icd10cm#O00.112  // Left tubal pregnancy with intrauterine pregnancy
+* $icd10cm#O00.119  // Unspecified tubal pregnancy with intrauterine pregnancy
+* $icd10cm#O00.201  // Right ovarian pregnancy without intrauterine pregnancy
+* $icd10cm#O00.202  // Left ovarian pregnancy without intrauterine pregnancy
+* $icd10cm#O00.209  // Unspecified ovarian pregnancy without intrauterine pregnancy
+* $icd10cm#O00.211  // Right ovarian pregnancy with intrauterine pregnancy
+* $icd10cm#O00.212  // Left ovarian pregnancy with intrauterine pregnancy
+* $icd10cm#O00.219  // Unspecified ovarian pregnancy with intrauterine pregnancy
+* $icd10cm#O00.80   // Other ectopic pregnancy without intrauterine pregnancy
+* $icd10cm#O00.81   // Other ectopic pregnancy with intrauterine pregnancy
+* $icd10cm#O00.90   // Unspecified ectopic pregnancy without intrauterine pregnancy
+* $icd10cm#O00.91   // Unspecified ectopic pregnancy with intrauterine pregnancy
+* $icd10cm#O01.1    // Incomplete and partial hydatidiform mole
+* $icd10cm#O01.9    // Hydatidiform mole, unspecified
+* $icd10cm#O02.1    // Missed abortion
+* $icd10cm#O03.0    // Genital tract and pelvic infection following incomplete spontaneous abortion
+* $icd10cm#O03.1    // Delayed or excessive hemorrhage following incomplete spontaneous abortion
+* $icd10cm#O03.2    // Embolism following incomplete spontaneous abortion
+* $icd10cm#O03.30   // Unspecified complication following incomplete spontaneous abortion
+* $icd10cm#O03.32   // Renal failure following incomplete spontaneous abortion
+* $icd10cm#O03.33   // Metabolic disorder following incomplete spontaneous abortion
+* $icd10cm#O03.34   // Damage to pelvic organs following incomplete spontaneous abortion
+* $icd10cm#O03.35   // Other venous complications following incomplete spontaneous abortion
+* $icd10cm#O03.36   // Cardiac arrest following incomplete spontaneous abortion
+* $icd10cm#O03.37   // Sepsis following incomplete spontaneous abortion
+* $icd10cm#O03.38   // Urinary tract infection following incomplete spontaneous abortion
+* $icd10cm#O03.39   // Incomplete spontaneous abortion with other complications
+* $icd10cm#O03.4    // Incomplete spontaneous abortion without complication
+* $icd10cm#O03.5    // Genital tract and pelvic infection following complete or unspecified spontaneous abortion
+* $icd10cm#O03.6    // Delayed or excessive hemorrhage following complete or unspecified spontaneous abortion
+* $icd10cm#O03.7    // Embolism following complete or unspecified spontaneous abortion
+* $icd10cm#O03.80   // Unspecified complication following complete or unspecified spontaneous abortion
+* $icd10cm#O03.81   // Shock following complete or unspecified spontaneous abortion
+* $icd10cm#O03.82   // Renal failure following complete or unspecified spontaneous abortion
+* $icd10cm#O03.83   // Metabolic disorder following complete or unspecified spontaneous abortion
+* $icd10cm#O03.84   // Damage to pelvic organs following complete or unspecified spontaneous abortion
+* $icd10cm#O03.85   // Other venous complications following complete or unspecified spontaneous abortion
+* $icd10cm#O03.86   // Cardiac arrest following complete or unspecified spontaneous abortion
+* $icd10cm#O03.87   // Sepsis following complete or unspecified spontaneous abortion
+* $icd10cm#O03.88   // Urinary tract infection following complete or unspecified spontaneous abortion
+* $icd10cm#O03.89   // Complete or unspecified spontaneous abortion with other complications
+* $icd10cm#O03.9    // Complete or unspecified spontaneous abortion without complication
+* $icd10cm#O04.5    // Genital tract and pelvic infection following (induced) termination of pregnancy
+* $icd10cm#O04.6    // Delayed or excessive hemorrhage following (induced) termination of pregnancy
+* $icd10cm#O04.7    // Embolism following (induced) termination of pregnancy
+* $icd10cm#O04.80   // (Induced) termination of pregnancy with unspecified complications
+* $icd10cm#O04.81   // Shock following (induced) termination of pregnancy
+* $icd10cm#O04.82   // Renal failure following (induced) termination of pregnancy
+* $icd10cm#O04.83   // Metabolic disorder following (induced) termination of pregnancy
+* $icd10cm#O04.84   // Damage to pelvic organs following (induced) termination of pregnancy
+* $icd10cm#O04.85   // Other venous complications following (induced) termination of pregnancy
+* $icd10cm#O04.86   // Cardiac arrest following (induced) termination of pregnancy
+* $icd10cm#O04.87   // Sepsis following (induced) termination of pregnancy
+* $icd10cm#O04.88   // Urinary tract infection following (induced) termination of pregnancy
+* $icd10cm#O04.89   // (Induced) termination of pregnancy with other complications
+* $icd10cm#O07.0    // Genital tract and pelvic infection following failed attempted termination of pregnancy
+* $icd10cm#O07.1    // Delayed or excessive hemorrhage following failed attempted termination of pregnancy
+* $icd10cm#O07.2    // Embolism following failed attempted termination of pregnancy
+* $icd10cm#O07.30   // Failed attempted termination of pregnancy with unspecified complications
+* $icd10cm#O07.31   // Shock following failed attempted termination of pregnancy
+* $icd10cm#O07.32   // Renal failure following failed attempted termination of pregnancy
+* $icd10cm#O07.33   // Metabolic disorder following failed attempted termination of pregnancy
+* $icd10cm#O07.34   // Damage to pelvic organs following failed attempted termination of pregnancy
+* $icd10cm#O07.35   // Other venous complications following failed attempted termination of pregnancy
+* $icd10cm#O07.36   // Cardiac arrest following failed attempted termination of pregnancy
+* $icd10cm#O07.37   // Sepsis following failed attempted termination of pregnancy
+* $icd10cm#O07.38   // Urinary tract infection following failed attempted termination of pregnancy
+* $icd10cm#O07.39   // Failed attempted termination of pregnancy with other complications
+* $icd10cm#O07.4    // Failed attempted termination of pregnancy without complication
+* $icd10cm#O08.2    // Embolism following ectopic and molar pregnancy
+* $icd10cm#O08.3    // Shock following ectopic and molar pregnancy
+* $icd10cm#O08.4    // Renal failure following ectopic and molar pregnancy
+* $icd10cm#O08.82   // Sepsis following ectopic and molar pregnancy
+* $icd10cm#O08.83   // Urinary tract infection following an ectopic and molar pregnancy
+* $icd10cm#O08.89   // Other complications following an ectopic and molar pregnancy
+* $icd10cm#O20.0    // Threatened abortion
+* $icd10cm#O20.8    // Other hemorrhage in early pregnancy
+* $icd10cm#O20.9    // Hemorrhage in early pregnancy, unspecified
+* $icd10cm#Q89.7    // Multiple congenital malformations, not elsewhere classified
+* $icd10cm#Z33.2    // Encounter for elective termination of pregnancy
+* $icd10cm#Z64.0    // Problems related to unwanted pregnancy
 
 
 ValueSet: VS_Gender_Affirming_Care_HealthNet
 Id: vs-gender-affirming-care-healthnet
 Title: "Gender-Affirming Care Codes (Health Net California)"
 Description: """
-CPT and ICD-10-CM codes referenced in Health Net California’s clinical policy
-'HNCA.CP.MP.496 – Gender Affirming Procedures'. Intended for segmentation of
+CPT and ICD-10-CM codes referenced in Health Net California's clinical policy
+'HNCA.CP.MP.496 - Gender Affirming Procedures'. Intended for segmentation of
 gender-affirming care under AB352.
+- Filename: HNCA.CP.MP.496.pdf
 """
 * ^status = #active
 * ^experimental = false
@@ -161,7 +216,7 @@ gender-affirming care under AB352.
 * $cpt#11950
 * $cpt#11951
 * $cpt#11952
-* $cpt#11953
+//* $cpt#11953
 * $cpt#11954
 * $cpt#11970
 * $cpt#14000
@@ -295,59 +350,10 @@ gender-affirming care under AB352.
 * $cpt#58285
 
 
-ValueSet: VS_Gender_Affirming_Care
-Id: vs-gender-affirming-care
-Title: "Gender-Affirming Care Topics"
-Description: """
-Clinical concepts related to gender-affirming care drawn from LOINC, SNOMED CT, and ICD-10-CM.
-Intended for segmentation of sensitive gender-affirming care information under AB352.
-"""
-* ^status = #active
-* ^experimental = false
-
-// ------------------------------------------------------------
-// LOINC — gender identity, transition-related assessments, hormones
-// ------------------------------------------------------------
-* $loinc#76691-5     // Gender identity
-* $loinc#99502-0     // Sex assigned at birth
-* $loinc#99501-2     // Patient's pronouns
-* $loinc#99503-8     // Gender transition status
-* $loinc#74013-4     // Estradiol [Mass/volume] (monitoring HRT)
-* $loinc#16128-1     // Testosterone [Mass/volume] (monitoring HRT)
-* $loinc#30522-7      // LH/FSH panel (puberty blocker monitoring)
 
 
-// ------------------------------------------------------------
-// SNOMED CT — gender-affirming procedures, therapies, findings
-// ------------------------------------------------------------
-* $snomed#718344006     // Gender-affirming hormone therapy
-* $snomed#133931009     // Gender dysphoria (finding)
-* $snomed#443883004     // Counseling for gender identity
-* $snomed#306080006     // Orchiectomy (gender-affirming)
-* $snomed#18286008      // Mastectomy (gender-affirming)
-* $snomed#450337009     // Vaginoplasty (gender-affirming)
-* $snomed#450338004     // Phalloplasty (gender-affirming)
-* $snomed#450339007     // Metoidioplasty (gender-affirming)
-* $snomed#450340009     // Breast augmentation (gender-affirming)
-* $snomed#386637004     // Hormone administration (procedure)
-
-
-// ------------------------------------------------------------
-// ICD-10-CM — gender dysphoria, endocrine management, encounters
-// ------------------------------------------------------------
-* $icd10cm#F64.0       // Transsexualism / gender dysphoria
-* $icd10cm#F64.1       // Dual-role transvestism
-* $icd10cm#F64.2       // Gender identity disorder of childhood
-* $icd10cm#F64.8       // Other gender identity disorders
-* $icd10cm#F64.9       // Gender identity disorder, unspecified
-* $icd10cm#Z87.890     // Personal history of sex reassignment
-* $icd10cm#Z79.890     // Long-term use of hormone therapy
-* $icd10cm#Z51.81      // Encounter for therapeutic drug monitoring (HRT)
-
-
-
-ValueSet: VS_Contraception
-Id: vs-contraception
+ValueSet: VS_Contraception_AI
+Id: vs-contraception-ai
 Title: "Contraception-Related Health Topics"
 Description: """
 Clinical concepts related to contraception drawn from LOINC, SNOMED CT, and ICD-10-CM.
@@ -359,47 +365,61 @@ does not include code recommendations from Health Net California.
 * ^experimental = false
 
 // ------------------------------------------------------------
-// LOINC — contraceptive method, history, counseling, monitoring
+// LOINC — contraceptive method, history, counseling, education
 // ------------------------------------------------------------
-* $loinc#8663-7      // Contraceptive method [History]
-* $loinc#8664-5      // Contraceptive use [History]
-* $loinc#74013-4     // Estradiol (HRT / contraceptive monitoring)
-* $loinc#16128-1     // Testosterone (HRT / contraceptive relevance)
-* $loinc#39294-1     // Pregnancy intention
-* $loinc#39295-8     // Contraceptive counseling note
-* $loinc#56899-0     // Contraception education
-
+* $loinc#8663-7 //"Contraceptive method [History]"
+* $loinc#8664-5 //"Contraceptive use [History]"
 
 // ------------------------------------------------------------
-// SNOMED CT — contraceptive procedures, devices, counseling
+// SNOMED CT — contraception counseling, management, LARC, sterilization
 // ------------------------------------------------------------
-* $snomed#147451000119108   // Contraception education (procedure)
-* $snomed#386761002         // Contraceptive management (procedure)
-* $snomed#169745008         // Contraception counseling (finding)
-* $snomed#449010006         // Insertion of intrauterine contraceptive device
-* $snomed#386637004         // Hormone administration (relevant to contraceptive therapy)
-* $snomed#304527002         // Oral contraceptive pill regimen
-* $snomed#703423000         // Emergency contraception
-* $snomed#169472004         // Sterilization counseling
-* $snomed#265010009          // Tubal ligation (female sterilization)
-
+* $snomed#169745008 //"Contraception counseling"
+* $snomed#386761002 //"Contraceptive management (procedure)"
+* $snomed#304527002 //"Oral contraceptive pill regimen"
+* $snomed#169472004 //"Sterilization counseling"
 
 // ------------------------------------------------------------
-// ICD-10-CM — contraceptive management, surveillance, complications
+// ICD-10-CM — contraceptive management, surveillance, sterilization
 // ------------------------------------------------------------
-* $icd10cm#Z30.011    // Encounter for initial prescription of contraceptive pills
-* $icd10cm#Z30.012    // Encounter for renewal of contraceptive pills
-* $icd10cm#Z30.013    // Encounter for emergency contraception
-* $icd10cm#Z30.014    // Encounter for initial prescription of injectable contraceptive
-* $icd10cm#Z30.015    // Encounter for surveillance of injectable contraceptive
-* $icd10cm#Z30.016    // Encounter for initial prescription of transdermal patch
-* $icd10cm#Z30.017    // Encounter for surveillance of transdermal patch
-* $icd10cm#Z30.018    // Encounter for other contraceptive management
-* $icd10cm#Z30.019    // Encounter for unspecified contraceptive management
-* $icd10cm#Z30.430    // Encounter for insertion of IUD
-* $icd10cm#Z30.431    // Encounter for removal of IUD
-* $icd10cm#Z30.432    // Encounter for removal and reinsertion of IUD
-* $icd10cm#Z30.2      // Sterilization
-* $icd10cm#Z30.8      // Other contraceptive management
-* $icd10cm#Z30.9       // Contraceptive management, unspecified
+* $icd10cm#Z30.011 //"Encounter for initial prescription of contraceptive pills"
+* $icd10cm#Z30.012 //"Encounter for renewal of contraceptive pills"
+* $icd10cm#Z30.013 //"Encounter for emergency contraception"
+* $icd10cm#Z30.014 //"Encounter for initial prescription of injectable contraceptive"
+* $icd10cm#Z30.015 //"Encounter for surveillance of injectable contraceptive"
+* $icd10cm#Z30.016 //"Encounter for initial prescription of transdermal patch"
+* $icd10cm#Z30.017 //"Encounter for surveillance of transdermal patch"
+* $icd10cm#Z30.018 //"Encounter for other contraceptive management"
+* $icd10cm#Z30.019 //"Encounter for unspecified contraceptive management"
+* $icd10cm#Z30.2   //"Encounter for sterilization"
+* $icd10cm#Z30.430 //"Encounter for insertion of IUD"
+* $icd10cm#Z30.431 //"Encounter for removal of IUD"
+* $icd10cm#Z30.432 //"Encounter for removal and reinsertion of IUD"
+* $icd10cm#Z30.8   //"Other specified contraceptive management"
+* $icd10cm#Z30.9   //"Contraceptive management, unspecified"
+// ------------------------------------------------------------
+// CPT — LARC, sterilization, and related contraceptive procedures
+// ------------------------------------------------------------
+// LARC – implants
+* $cpt#11981 //"Insertion, non-biodegradable drug delivery implant"
+* $cpt#11982 //"Removal, non-biodegradable drug delivery implant"
+* $cpt#11983 //"Removal with reinsertion, non-biodegradable drug delivery implant"
 
+// LARC – IUD
+* $cpt#58300 //"Insertion of intrauterine device (IUD)"
+* $cpt#58301 //"Removal of intrauterine device (IUD)"
+
+// Sterilization – female
+* $cpt#58600 //"Ligation or transection of fallopian tube(s), abdominal or vaginal"
+* $cpt#58611 //"Ligation or transection of fallopian tube(s) at time of cesarean delivery"
+* $cpt#58615 //"Occlusion of fallopian tube(s) by device (eg, band, clip)"
+* $cpt#58670 //"Laparoscopy, surgical; with fulguration of oviducts"
+* $cpt#58671 //"Laparoscopy, surgical; with occlusion of oviducts by device"
+
+// Sterilization – male
+* $cpt#55250 //"Vasectomy, unilateral or bilateral"
+
+// Counseling (family planning context)
+* $cpt#99401 //"Preventive counseling, individual, approx. 15 minutes"
+* $cpt#99402 //"Preventive counseling, individual, approx. 30 minutes"
+* $cpt#99403 //"Preventive counseling, individual, approx. 45 minutes"
+* $cpt#99404 //"Preventive counseling, individual, approx. 60 minutes"
