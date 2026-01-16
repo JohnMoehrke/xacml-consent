@@ -8,41 +8,9 @@ This IG is founded on HL7 FHIR Revision {{site.data.fhir.version}} found at [{{s
 <br/>
 </div>
 
-The Consent points at the [overriding policy](#xacml-overriding-policy) and the [patient specific policy](#xacml-patient-consent-policy) as shown below. This is [Profiled](StructureDefinition-fhir-consent-xacml.html):
+- [Generic XACML Consent example](generic.html)
+- [California AB352 XACML Consent example](ab352.html)
 
-~~~mermaid
-graph TD
-    A[FHIR Consent Resource] -->|policy.uri| B[XACML Overriding Policy]
-    A -->|"source[x]"| C[XACML Patient Consent Policy]
-    style B fill:#ff0000,color:#fff
-    style C fill:#ff0000,color:#fff
-
-~~~
-
-Examples of Consent:
-
-- [Consent with copy of XACML policy set](Consent-ExampleFHIRConsentXACMLcopy.html) includes the `source[x]` element with pointer to a copy of the patient specific XACML policy as a DocumentReference resource.
-- [Consent with link to XACML policy set](Consent-ExampleFHIRConsentXACMLreference.html) uses the `source[x]` element to point at the overriding XACML policy.
-
-### XACML Policies
-
-Using XACML leverages an existing standard for defining access control policies. XACML policies are XML documents that specify rules for granting or denying access to resources based on various attributes, such as user roles, resource types, and environmental conditions.
-
-#### XACML Overriding Policy
-
-The XACML Overriding Policy is a policy set that defines the overarching access control rules for FHIR resources. This policy is intended to be used in conjunction with patient-specific XACML policies referenced in FHIR Consent resources. The overriding policy ensures that certain organizational or regulatory requirements are consistently applied across all patient consents.
-
-~~~xml
-{% include_relative xacml-overriding.xml %}
-~~~
-
-#### XACML Patient Consent Policy
-
-The XACML Patient Consent Policy is a policy document that defines the specific access control rules for an individual patient. This policy is referenced in the FHIR Consent resource and works in conjunction with the XACML Overriding Policy to determine access permissions for FHIR resources.
-
-~~~xml
-{% include_relative xacml-consent.xml %}
-~~~
 
 ### Source
 
