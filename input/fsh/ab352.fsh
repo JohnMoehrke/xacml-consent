@@ -33,7 +33,7 @@ Usage: #example
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
-  * securityLabel[+] = http://terminology.hl7.org/ValueSet/v3-Confidentiality#N "Normal"
+  * securityLabel[+] = http://terminology.hl7.org/CodeSystem/v3-Confidentiality#N "Normal"
 
   * provision[0]
     * type = #deny
@@ -89,7 +89,7 @@ Usage: #example
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
-  * securityLabel[+] = http://terminology.hl7.org/ValueSet/v3-Confidentiality#N "Normal"
+  * securityLabel[+] = http://terminology.hl7.org/CodeSystem/v3-Confidentiality#N "Normal"
 
   * provision[0]
     * type = #deny
@@ -148,8 +148,8 @@ Usage: #example
   * securityLabel[+] = CS_Health_Sensitivity#ABORTION
   * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
   * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
-  * securityLabel[+] = http://terminology.hl7.org/ValueSet/v3-Confidentiality#N "Normal"
-  * securityLabel[+] = http://terminology.hl7.org/ValueSet/v3-Confidentiality#R "Restricted"
+  * securityLabel[+] = http://terminology.hl7.org/CodeSystem/v3-Confidentiality#N "Normal"
+  * securityLabel[+] = http://terminology.hl7.org/CodeSystem/v3-Confidentiality#R "Restricted"
 
 Instance: ca-location
 InstanceOf: Location
