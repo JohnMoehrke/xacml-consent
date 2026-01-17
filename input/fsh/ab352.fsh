@@ -1,8 +1,12 @@
 Instance: Consent-AB352-Example
 InstanceOf: Consent
-Title: "AB352 Organizational Privacy Consent"
+Title: "AB352 Organizational Privacy Consent - depth"
 Description: """
 A FHIR Consent instance that is an explicit consent for AB 352 protected data, with provisions that reflect the statutory requirements, with auto-filter bypassed for in-state recipients.
+
+- permit TPO
+  - deny sensitive data [for TPO]
+    - permit in-state [sensitive data for TPO]
 """
 Usage: #example
 
@@ -24,9 +28,116 @@ Usage: #example
 //* policy[0].authority = "https://example-hospital.org"
 //* policy[0].uri = "urn:org:hospital:policyset:AB352"
 
-///////////////////////////////////////////////////////////////
-// Top-level provision: permit treatment by in-state providers
-///////////////////////////////////////////////////////////////
+* provision[0]
+  * type = #permit
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
+  * securityLabel[+] = http://hl7.org/fhir/v3/Confidentiality#N "Normal"
+
+  * provision[0]
+    * type = #deny
+        // Out-of-state recipient  -- By NOT specifying a location, we mean all
+    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+    // Note this does leave ambiguous any R data that are not these three sensitivity tags.
+    // don't need to restate purpose as it is inherited from parent provision.
+
+    * provision[0]
+      * type = #permit
+      // In-state recipient, are permitted to access the sensitive data
+      * extension[+].url = "http://hl7.org/fhir/StructureDefinition/consent-location"
+      * extension[=].valueReference = Reference(Location/ca-location) 
+        // don't need to restate the purpose and securityLabel here since they are inherited from the parent provision.
+// Note that R4 Consent does not address what rule applies if NONE of the provisions match. (R6 has a default rule at the top level)
+
+Instance: Consent-AB352-Example2
+InstanceOf: Consent
+Title: "AB352 Organizational Privacy Consent - breath"
+Description: """
+A FHIR Consent instance that is an explicit consent for AB 352 protected data, with provisions that reflect the statutory requirements, with auto-filter bypassed for in-state recipients.
+
+Breath first - not possible with R6 consent structure, but shown here for clarity.
+
+- permit TPO
+  - deny sensitive data [for TPO]
+  - permit in-state sensitive data [for TPO]
+"""
+Usage: #example
+
+* status = #active
+* scope = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy "Privacy Consent"
+
+* category[0] = http://loinc.org#64292-6 "Release of information consent"
+
+* patient = Reference(http://example.org/Patient/example)
+* dateTime = "2025-01-15T12:00:00Z"
+
+* organization[0] = Reference(http://example.org/Organization/ca-hospital)
+* organization[0].display = "Example California Hospital"
+
+* policyRule.coding.system = "urn:ietf:rfc:3986"
+* policyRule.coding.code = #urn:law:us:ca:statute:AB352
+* policyRule.coding.display = "California AB 352"
+
+//* policy[0].authority = "https://example-hospital.org"
+//* policy[0].uri = "urn:org:hospital:policyset:AB352"
+
+* provision[0]
+  * type = #permit
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
+  * securityLabel[+] = http://hl7.org/fhir/v3/Confidentiality#N "Normal"
+
+  * provision[0]
+    * type = #deny
+        // Out-of-state recipient  -- By NOT specifying a location, we mean all
+    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+    // Note this does leave ambiguous any R data that are not these three sensitivity tags.
+    // don't need to restate purpose as it is inherited from parent provision.
+
+  * provision[1]
+    * type = #permit
+    // In-state recipient, are permitted to access the sensitive data
+    * extension[+].url = "http://hl7.org/fhir/StructureDefinition/consent-location"
+    * extension[=].valueReference = Reference(Location/ca-location) 
+    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+        // don't need to restate purpose as it is inherited from parent provision.
+// Note that R4 Consent does not address what rule applies if NONE of the provisions match. (R6 has a default rule at the top level)
+
+Instance: Consent-AB352-Example-AllowAll
+InstanceOf: Consent
+Title: "AB352 Organizational Privacy Consent - Allow All"
+Description: """
+A FHIR Consent instance that is an explicit consent for AB 352 protected data, with provisions that reflect Patient allowing all access.
+
+- permit TPO
+"""
+Usage: #example
+
+* status = #active
+* scope = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy "Privacy Consent"
+
+* category[0] = http://loinc.org#64292-6 "Release of information consent"
+
+* patient = Reference(http://example.org/Patient/example)
+* dateTime = "2025-01-15T12:00:00Z"
+
+* organization[0] = Reference(http://example.org/Organization/ca-hospital)
+* organization[0].display = "Example California Hospital"
+
+* policyRule.coding.system = "urn:ietf:rfc:3986"
+* policyRule.coding.code = #urn:law:us:ca:statute:AB352
+* policyRule.coding.display = "California AB 352"
+
+* policy[0].authority = "https://example-hospital.org"
+* policy[0].uri = "urn:org:hospital:policyset:AB352"
 
 * provision[0]
   * type = #permit
@@ -34,32 +145,11 @@ Usage: #example
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
   * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
 
-  * provision[0]
-    * type = #permit
-    * extension[+].url = "http://hl7.org/fhir/StructureDefinition/consent-location"
-    * extension[=].valueReference = Reference(Location/ca-location) 
-    /*
-    * actor[0]
-      * role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
-      * reference = Reference(http://example.org/Organization/ca-hospital) // assume all CA providers could be grouped by a CA Organization.
-      * reference.display = "In-state (CA) providers"
-      */
-    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
-    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
-    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
-
-  * provision[1]
-    * type = #deny
-        // Out-of-state recipient  -- By NOT specifying an actor, we mean all other actors than the in-state provider above
-    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
-    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
-    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
-    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
+  * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+  * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+  * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+  * securityLabel[+] = http://hl7.org/fhir/v3/Confidentiality#N "Normal"
+  * securityLabel[+] = http://hl7.org/fhir/v3/Confidentiality#R "Restricted"
 
 Instance: ca-location
 InstanceOf: Location
