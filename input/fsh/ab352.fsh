@@ -36,10 +36,14 @@ Usage: #example
 
   * provision[0]
     * type = #permit
+    * extension[+].url = "http://hl7.org/fhir/StructureDefinition/consent-location"
+    * extension[=].valueReference = Reference(Location/ca-location) 
+    /*
     * actor[0]
       * role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
-      * reference = Reference(http://example.org/Organization/ca-hospital)
+      * reference = Reference(http://example.org/Organization/ca-hospital) // assume all CA providers could be grouped by a CA Organization.
       * reference.display = "In-state (CA) providers"
+      */
     * securityLabel[+] = CS_Health_Sensitivity#ABORTION
     * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
     * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
@@ -49,10 +53,7 @@ Usage: #example
 
   * provision[1]
     * type = #deny
-        // Out-of-state recipient  -- By NOT specifying a actor, we mean all other actors than the in-state provider above
-    * actor[0]
-      * role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
-      * reference.display = "Out-of-state providers"
+        // Out-of-state recipient  -- By NOT specifying an actor, we mean all other actors than the in-state provider above
     * securityLabel[+] = CS_Health_Sensitivity#ABORTION
     * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
     * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
@@ -60,6 +61,12 @@ Usage: #example
     * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
     * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
 
+Instance: ca-location
+InstanceOf: Location
+Title: "California Location"
+Description: "Location resource representing California for use in Consent provisions."
+* status = #active
+* address.state = "CA"
 
 
 CodeSystem: CS_Health_Sensitivity
