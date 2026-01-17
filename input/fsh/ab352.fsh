@@ -1,15 +1,15 @@
 Instance: Consent-AB352-Example
 InstanceOf: Consent
 Title: "AB352 Organizational Privacy Consent"
-Description: "Consent representing AB352 regulatory basis and organizational XACML enforcement policy."
+Description: """
+A FHIR Consent instance that is an explicit consent for AB 352 protected data, with provisions that reflect the statutory requirements, with auto-filter bypassed for in-state recipients.
+"""
 Usage: #example
 
 * status = #active
 * scope = http://terminology.hl7.org/CodeSystem/consentscope#patient-privacy "Privacy Consent"
 
-* category[0].coding[0].system = "http://loinc.org"
-* category[0].coding[0].code = #64292-6
-* category[0].coding[0].display = "Release of information consent"
+* category[0] = http://loinc.org#64292-6 "Release of information consent"
 
 * patient = Reference(http://example.org/Patient/example)
 * dateTime = "2025-01-15T12:00:00Z"
@@ -21,37 +21,45 @@ Usage: #example
 * policyRule.coding.code = #urn:law:us:ca:statute:AB352
 * policyRule.coding.display = "California AB 352"
 
-* policy[0].authority = "https://example-hospital.org"
-* policy[0].uri = "urn:org:hospital:policyset:AB352"
+//* policy[0].authority = "https://example-hospital.org"
+//* policy[0].uri = "urn:org:hospital:policyset:AB352"
 
 ///////////////////////////////////////////////////////////////
 // Top-level provision: permit treatment by in-state providers
 ///////////////////////////////////////////////////////////////
 
-* provision[0].type = #permit
+* provision[0]
+  * type = #permit
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
+  * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
 
-// Sensitivity classes (segmented categories)
-* provision[0].securityLabel[+] = CS_Health_Sensitivity#ABORTION
-* provision[0].securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
-* provision[0].securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
-// Purpose of use: treatment
-* provision[0].purpose = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+  * provision[0]
+    * type = #permit
+    * actor[0]
+      * role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
+      * reference = Reference(http://example.org/Organization/ca-hospital)
+      * reference.display = "In-state (CA) providers"
+    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
 
-// In-state provider actor
-* provision[0].actor[0].role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
-* provision[0].actor[0].reference = Reference(http://example.org/Organization/ca-hospital)
-* provision[0].actor[0].reference.display = "In-state (CA) providers"
-///////////////////////////////////////////////////////////////
-// Nested provision: deny disclosure to out-of-state recipients
-///////////////////////////////////////////////////////////////
+  * provision[1]
+    * type = #deny
+        // Out-of-state recipient  -- By NOT specifying a actor, we mean all other actors than the in-state provider above
+    * actor[0]
+      * role = http://terminology.hl7.org/CodeSystem/v3-ParticipationType#IRCP
+      * reference.display = "Out-of-state providers"
+    * securityLabel[+] = CS_Health_Sensitivity#ABORTION
+    * securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
+    * securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#TREAT
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HPAYMT
+    * purpose[+] = http://terminology.hl7.org/CodeSystem/v3-ActReason#HOPERAT
 
-* provision[0].provision[0].type = #deny
-
-* provision[0].provision[0].securityLabel[+] = CS_Health_Sensitivity#ABORTION
-* provision[0].provision[0].securityLabel[+] = CS_Health_Sensitivity#GENDER_AFFIRMING_CARE
-* provision[0].provision[0].securityLabel[+] = CS_Health_Sensitivity#CONTRACEPTION
-
-// Out-of-state recipient  -- By NOT specifying a actor, we mean all other actors than the in-state provider above
 
 
 CodeSystem: CS_Health_Sensitivity
@@ -92,13 +100,28 @@ ValueSet: VS_Abortion_Topics_HealthNet
 Id: vs-abortion-topics-healthnet
 Title: "Abortion-Related Health Topics (Health Net California)"
 Description: """
-ICD-10-CM codes for abortion-related services referenced in Health Net California's clinical policy.
-This list contains principal diagnosis codes for abortion and abortion-related services processed 
-at zero cost share in accordance with Senate Bill 245 (the Abortion Accessibility Act).
+Health Net explains and references 500073-Abortion-DX-Code-List.pdf file primarily within its Provider Library and through Provider Bulletins related to legislative compliance. The specific explanation is found in the context of Assembly Bill (AB) 352, which mandates the segregation and protection of sensitive health data.
 
-Health Net California's clinical policy 'HNCA.CP.MP.495 – Abortion Services' provides the
-guidelines for coverage of abortion services, including the specific ICD-10-CM codes listed below.
-- Filename: 500073-Abortion-DX-Code-List.pdf
+**Where the Explanation is Located:**
+
+1. **Provider Bulletin 24-351 (New Laws Help Safeguard Privacy):** Health Net (and its affiliate Wellcare) issued this bulletin to explain the requirements of AB 352. The bulletin explicitly identifies abortion and abortion-related services as "Sensitive Services" that must be:
+   - Segregated from the rest of the patient's medical record.
+   - Excluded from automatic sharing with the California Data Exchange Framework (DxF).
+   - Protected from out-of-state subpoenas or investigations.
+   - **Reference:** [Wellcare/Health Net Bulletin 24-351](https://providerlibrary.healthnetcalifornia.com/)
+
+2. **Health Net Provider Library - `Pregnancy Termination` Section:** The website hosts a dedicated page for pregnancy termination benefits. It explains that to comply with California laws (specifically SB 245 for cost-sharing and AB 352 for privacy), providers must use specific diagnosis codes. The 500073 PDF serves as the technical master list for these required codes.
+   - **Reference:** [Pregnancy Termination - Health Net Provider Library](https://providerlibrary.healthnetcalifornia.com/)
+
+3. **The PDF Itself:** The document title, `ICD-10-CM Codes for Abortion-Related Services,` is the direct label Health Net uses on its search results and directory pages to explain what the file contains. It lists codes ranging from O00 (Ectopic pregnancy) to Z33.2 (Encounter for elective termination).
+
+**How Health Net Directs Providers to Use This File:**
+
+According to the site's AB 352 guidance, Health Net recommends that IT and Billing departments download this PDF and use the listed codes to create firewalls in EHR systems. If a patient's record contains any code found in 500073-Abortion-DX-Code-List.pdf, the system should automatically:
+- Block that data from being sent to out-of-state entities.
+- Prevent the data from being discovered in automated health information exchanges.
+
+**Direct Link to the Document:** [500073-Abortion-DX-Code-List.pdf](https://providerlibrary.healthnetcalifornia.com/content/dam/centene/healthnet/pdfs/providerlibrary/500073-Abortion-DX-Code-List.pdf)
 
 **Note:** This list may not be all-inclusive and is subject to change.
 """
@@ -204,7 +227,19 @@ Description: """
 CPT and ICD-10-CM codes referenced in Health Net California's clinical policy
 'HNCA.CP.MP.496 - Gender Affirming Procedures'. Intended for segmentation of
 gender-affirming care under AB352.
-- Filename: HNCA.CP.MP.496.pdf
+
+**Health Net Bulletin 24-351**
+
+Health Net's [bulletin 24-351](https://providerlibrary.healthnetcalifornia.com/) explicitly tells providers that services defined in policies like HNCA.CP.MP.496 must be:
+
+- **Blocked from automatic sharing** with the California Data Exchange Framework (DxF).
+- **Omitted from responses** to out-of-state subpoenas or investigations.
+- **Flagged within the EHR** to prevent unauthorized access by users outside of California.
+
+**Where to Find and Download HNCA.CP.MP.496.pdf** Health Net maintains this policy in several locations within their provider libraries:
+
+- **Direct PDF Link:** [HNCA.CP.MP.496 - Gender Affirming Procedures](https://providerlibrary.healthnetcalifornia.com/content/dam/centene/healthnet/pdfs/providerlibrary/HNCA.CP.MP.496.pdf)
+- **The Provider Library Archive:** You can find this by navigating to Health Net Provider Library > Resources > Clinical Policies and searching for `Gender Affirming Procedures` or the code `496.`
 """
 * ^status = #active
 * ^experimental = false
@@ -359,7 +394,11 @@ Description: """
 Clinical concepts related to contraception drawn from LOINC, SNOMED CT, and ICD-10-CM.
 Intended for segmentation of sensitive reproductive health information under AB352.
 
-does not include code recommendations from Health Net California.
+This ValueSet does not include code recommendations from Health Net California. Health Net California does not have a single source document for contraception-related codes similar to their abortion-related code list. Instead, Health Net references multiple sources, including the DHCS Family PACT Code List, within various policy documents.
+
+- **Health Net Bulletin 24-351:** New Laws Help Safeguard Privacy ([View Link](https://providerlibrary.healthnetcalifornia.com/))
+- **Health Net Medi-Cal Provider Manual (Chapter 4):** Sensitive Services section ([Link to Manuals](https://providerlibrary.healthnetcalifornia.com/))
+- **Family PACT Policies:** Health Net adopts the DHCS Family PACT Code List as their baseline for identifying what constitutes a contraceptive service.
 """
 * ^status = #active
 * ^experimental = false
